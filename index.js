@@ -1,31 +1,31 @@
 require('dotenv').config()
 
-const { Client } = require('ssh2')
+const { Client } = require('ssh2');
 
 const conn = new Client()
 conn.on('ready', () => {
 	console.log('Client :: ready')
-	conn.exec('show port', (err, stream) => {
-		if (err) throw err
+	conn.shell((err, stream) => {
+		if (err) throw err;
+
 		stream
-			.on('close', (code, signal) => {
-				console.log('Stream :: close :: code: ' + code + ', signal: ' + signal)
+			.on('close', () => {
+				console.log('Stream :: close');
 				conn.end()
 			})
 			.on('data', (data) => {
-				console.log('STDOUT: ' + data)
+				console.log('OUTPUT: ' + data)
 			})
-			.stderr.on('data', (data) => {
-				console.log('STDERR: ' + data)
-			})
-	})
+
+		// Executando o comando
+		stream.write('show vlan port\n');
+		stream.end('exit\n'); // Envie 'exit\n' se necessário para fechar a sessão
+	});
 }).connect({
 	host: process.env.SW_HOST,
 	port: process.env.SW_PORT,
 	username: process.env.SW_USER,
 	password: process.env.SW_PASSWORD,
-	debug: console.log,
-	// https://stackoverflow.com/questions/41724475/ssh2-node-js-sftp-protocol-error-handshake-failed
 	algorithms: {
 		kex: [
 			'diffie-hellman-group14-sha1',
@@ -53,4 +53,4 @@ conn.on('ready', () => {
 			// "ecdsa-sha2-nistp521"
 		],
 	}
-})
+});
