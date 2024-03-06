@@ -8,13 +8,20 @@ conn.on('ready', () => {
 	conn.shell((err, stream) => {
 		if (err) throw err;
 
+		let dataBuffer = '';
+
 		stream
 			.on('close', () => {
 				console.log('Stream :: close');
 				conn.end()
 			})
 			.on('data', (data) => {
-				console.log('OUTPUT: ' + data)
+				dataBuffer += data;
+				// console.log('OUTPUT: ' + data)
+			})
+			.on('end', () => {
+				console.log('Stream :: end')
+				console.log('OUTPUT: ' + dataBuffer)
 			})
 
 		// Executando o comando
