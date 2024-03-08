@@ -8,17 +8,19 @@
 	@vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body id="app" class="flex flex-col max-w-7xl mx-auto min-h-screen">
-	{{-- @include('layouts/sidebar') --}}
+<body id="app" class="flex flex-col">
 	@include('layouts/header')
-	<main id="content" class="grow">
-		@if (partialHtmx)
-			@include(partialHtmx)
-		@else
-			{{-- <p>O conteúdo padrão da pagina inicial</p> --}}
-			@include(home)
-		@endif		
-	</main>
+	@include('layouts/sidebar')
+	<div class="sm:ml-64 mt-14 grow max-w-7xl mx-auto">
+		<main id="content">
+			@if (partialHtmx)
+				@include(partialHtmx)
+			@else
+				{{-- <p>O conteúdo padrão da pagina inicial</p> --}}
+				@include(home)
+			@endif		
+		</main>
+	</div>
 	@include('layouts/footer')
 </body>
 
