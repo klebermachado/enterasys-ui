@@ -8,5 +8,6 @@
 */
 
 import router from '@adonisjs/core/services/router'
+import SwitchesController from '../app/controllers/switches_controller.js'
 
-router.on('/').render('pages/home')
+router.get('/', [SwitchesController, 'show'])
