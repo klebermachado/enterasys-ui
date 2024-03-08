@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title> Enterasys UI - Sistema de gerencimamento de switches Enterasys</title>
+	@vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+
+<body id="app" class="flex flex-col max-w-7xl mx-auto min-h-screen">
+	{{-- @include('layouts/sidebar') --}}
+	@include('layouts/header')
+	<main id="content" class="grow">
+		@if (partialHtmx)
+			@include(partialHtmx)
+		@else
+			{{-- <p>O conteúdo padrão da pagina inicial</p> --}}
+			@include(home)
+		@endif		
+	</main>
+	@include('layouts/footer')
+</body>
+
+</html>
