@@ -11,8 +11,8 @@
 <body id="app" class="flex flex-col">
 	@include('layouts/header')
 	@include('layouts/sidebar')
-	<div class="sm:ml-64 mt-14 grow max-w-7xl mx-auto">
-		<main id="content">
+	<div class="sm:ml-64 mt-14 grow">
+		<main id="app-content">
 			@if (partialHtmx)
 				@include(partialHtmx)
 			@else
