@@ -6,6 +6,10 @@ import ArchitecturesController from '../app/controllers/architectures_controller
 router.get('/', [SwitchesController, 'show'])
 router.get('switches/create', [SwitchesController, 'create'])
 router.get('switches/:slug', [SwitchesController, 'index'])
+router.get('switches/:slug/vlans', [SwitchesController, 'vlansPage'])
+router.get('switches/:slug/ports', [SwitchesController, 'portsPage'])
+router.get('switches/:slug/config', [SwitchesController, 'configPage'])
+router.get('switches/:slug/backup', [SwitchesController, 'backupPage'])
 router.get('vlans', [VlansController, 'create'])
 
 router.get('architecture', [ArchitecturesController, 'index'])
