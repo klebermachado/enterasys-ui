@@ -1,52 +1,69 @@
 <div>
 	@each(port in [1,2,3,4,5,6])
-	<div class="flex flex-col gap-y-4 border bg-secondary-50 rounded-lg p-2 mb-4 text-xs">
-		<div class="flex justify-between">
-			<div>
-				<h3>ge.1.{{port}}</h3>
-			</div>
-			<div>
-				@if(port == 6)
-				<span class="font-bold">LINK</span>
-				@end
-			</div>
-		</div>
-		<div class="flex items-center gap-x-2">
-			<label class="w-24">VLAN port</label>
-			<select id="countries" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-				<option selected>Choose a VLAN Port</option>
-				<option value="US">United States</option>
-				<option value="CA">Canada</option>
-				<option value="FR">France</option>
-				<option value="DE">Germany</option>
-			</select>
-			<button type="button" class="py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">Change</button>
-		</div>
-		<div class="flex">
-			<label class="w-32" for="">VLAN Egress</label>
-			<div class="flex flex-wrap gap-2">
-				@each(vlan in [1,2,3,4,5,6])
-				<div class="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 flex flex-col">
-					<p class="border-b p-1 flex items-center justify-between">
-						<span>1120 - Administrativo</span>
-						<svg class="w-4 h-4 ml-4 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 8">
-							<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 5.326 5.7a.909.909 0 0 0 1.348 0L13 1"></path>
+		<div class="flex flex-col gap-y-4 border bg-secondary-50 rounded-lg p-2 mb-4 text-xs">
+			<div class="flex justify-between">
+				<div>
+					<h3>ge.1.{{port}}</h3>
+				</div>
+				<div>
+					@if(port == 6)
+					<div class="flex gap-1 items-center">
+						<span class="font-bold">LINK</span>
+						<svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+							<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.2 9.8a3.4 3.4 0 0 0-4.8 0L5 13.2A3.4 3.4 0 0 0 9.8 18l.3-.3m-.3-4.5a3.4 3.4 0 0 0 4.8 0L18 9.8A3.4 3.4 0 0 0 13.2 5l-1 1"/>
 						</svg>
-					</p>
-					<div class="flex">
-						<span class="border-r w-2/3 p-1 flex justify-between items-center">
-							<span>tagged</span>
-							<svg class="w-4 h-4 ml-4 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 8">
-								<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 5.326 5.7a.909.909 0 0 0 1.348 0L13 1"></path>
-							</svg>
-						</span>
-						<img class="w-12 p-1 ml-auto" src="https://i.fbcd.co/products/resized/resized-750-500/de18ae7d25cea00a569f391100ae56d990105791a99a2d42f35d84477a869d68.jpg" alt="">
+					</div>
+					@end
+				</div>
+			</div>
+			<div class="grid grid-cols-[80px_1fr] items-center">
+				<label>VLAN port</label>
+				<select id="countries" class="bg-white text-xs inline-block border max-w-64 border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+					<option selected>Choose a VLAN Port</option>
+					<option value="US">United States</option>
+					<option value="CA">Canada</option>
+					<option value="FR">France</option>
+					<option value="DE">Germany</option>
+				</select>
+			</div>
+			<div class="grid grid-cols-[80px_1fr]">
+				<label class="w-[80px] mt-4">VLAN Egress</label>
+				<div class="flex flex-wrap gap-2 items-center">
+					@each(vlan in [1,2,3,4, 5])
+						<div class="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 flex flex-col">
+							<div class="border-b p-1 flex items-center justify-between">
+								<select id="countries" class="border-none p-0 text-gray-900 text-sm rounded-lg focus:ring-0 focus:border-none block w-full dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-0 dark:focus:border-none">
+									<option selected>--</option>
+									<option value="1120">1120 - administrativo</option>
+									<option value="1130">1130 - dti</option>
+									<option value="1140">1140 - docentes</option>
+									<option value="1150">1150 - secretaria</option>
+								</select>
+							</div>
+							<div class="flex items-center">
+								<span class="border-r w-9/12 p-1 flex justify-between items-center">
+									<select id="countries" class="border-none p-0 text-gray-900 text-xs rounded-lg focus:ring-0 focus:border-none block w-full dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-0 dark:focus:border-none">
+										<option value="tagged">tagged</option>
+										<option value="untagged">untagged</option>
+									</select>
+								</span>
+								<svg class="w-5 h-5 text-gray-800 dark:text-white ml-auto mr-2 cursor-pointer" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+									<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z"/>
+								</svg>
+							</div>
+						</div>
+					@end
+					<div>
+						<button class="w-11 h-11 relative inline-flex items-center justify-center p-0.5 overflow-hidden text-sm font-medium text-gray-900 rounded-full group bg-gradient-to-br from-pink-500 to-orange-400 group-hover:from-pink-500 group-hover:to-orange-400 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800">
+							<span class="relative px-2 py-2 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-full group-hover:bg-opacity-0">
+								<svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+									<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7 7V5"/>
+								</svg>
+							</span>
+						</button>
 					</div>
 				</div>
-				@end
 			</div>
 		</div>
-	</div>
 	@end
-</div>
 </div>
