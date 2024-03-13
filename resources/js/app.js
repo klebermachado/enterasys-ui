@@ -1,6 +1,9 @@
 import htmx from 'htmx.org'
 import Alpine from 'alpinejs'
 import { initFlowbite } from 'flowbite';
+import helpers from './store/helpers'
+
+Alpine.store('helpers', helpers)
 
 window.htmx = htmx
 window.Alpine = Alpine
@@ -40,3 +43,4 @@ window.waitForHtmx = (cb) => {
 		count++
 	}, 100)
 }
+
