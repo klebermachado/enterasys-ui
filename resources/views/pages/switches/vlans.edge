@@ -1,69 +1,83 @@
-<div>
+<form hx-put="/switches/{{id}}">
+	{{ csrfField() }}
+	<button type="submit" class="px-5 py-2.5 mb-4 text-sm font-medium text-white inline-flex items-center bg-secondary-700 hover:bg-secondary-800 focus:ring-4 focus:outline-none focus:ring-secondary-300 rounded-lg text-center dark:bg-secondary-600 dark:hover:bg-secondary-700 dark:focus:ring-secondary-800">
+		<svg class="w-3.5 h-3.5 text-white me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 16">
+			<path d="m10.036 8.278 9.258-7.79A1.979 1.979 0 0 0 18 0H2A1.987 1.987 0 0 0 .641.541l9.395 7.737Z"/>
+			<path d="M11.241 9.817c-.36.275-.801.425-1.255.427-.428 0-.845-.138-1.187-.395L0 2.6V14a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V2.5l-8.759 7.317Z"/>
+		</svg>
+		Aplicar modificações
+	</button>
 	@each(port in [1,2,3,4,5,6])
-		<div class="flex flex-col gap-y-4 border bg-secondary-50 rounded-lg p-2 mb-4 text-xs">
-			<div class="flex justify-between">
-				<div>
-					<h3>ge.1.{{port}}</h3>
-				</div>
-				<div>
-					@if(port == 6)
-					<div class="flex gap-1 items-center">
-						<span class="font-bold">LINK</span>
-						<svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-							<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.2 9.8a3.4 3.4 0 0 0-4.8 0L5 13.2A3.4 3.4 0 0 0 9.8 18l.3-.3m-.3-4.5a3.4 3.4 0 0 0 4.8 0L18 9.8A3.4 3.4 0 0 0 13.2 5l-1 1"/>
-						</svg>
-					</div>
-					@end
-				</div>
+	<div class="flex flex-col gap-y-4 border bg-secondary-50 rounded-lg p-2 mb-4 text-xs">
+		<div class="flex justify-between">
+			<div>
+				<h3>ge.1.{{port}}</h3>
 			</div>
-			<div class="grid grid-cols-[80px_1fr] items-center">
-				<label>VLAN port</label>
-				<select id="countries" class="bg-white text-xs inline-block border max-w-64 border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-					<option selected>Choose a VLAN Port</option>
-					<option value="US">United States</option>
-					<option value="CA">Canada</option>
-					<option value="FR">France</option>
-					<option value="DE">Germany</option>
-				</select>
-			</div>
-			<div class="grid grid-cols-[80px_1fr]">
-				<label class="w-[80px] mt-4">VLAN Egress</label>
-				<div class="flex flex-wrap gap-2 items-center">
-					@each(vlan in [1,2,3,4, 5])
-						<div class="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 flex flex-col">
-							<div class="border-b p-1 flex items-center justify-between">
-								<select id="countries" class="border-none p-0 text-gray-900 text-sm rounded-lg focus:ring-0 focus:border-none block w-full dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-0 dark:focus:border-none">
-									<option selected>--</option>
-									<option value="1120">1120 - administrativo</option>
-									<option value="1130">1130 - dti</option>
-									<option value="1140">1140 - docentes</option>
-									<option value="1150">1150 - secretaria</option>
-								</select>
-							</div>
-							<div class="flex items-center">
-								<span class="border-r w-9/12 p-1 flex justify-between items-center">
-									<select id="countries" class="border-none p-0 text-gray-900 text-xs rounded-lg focus:ring-0 focus:border-none block w-full dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-0 dark:focus:border-none">
-										<option value="tagged">tagged</option>
-										<option value="untagged">untagged</option>
-									</select>
-								</span>
-								<svg class="w-5 h-5 text-gray-800 dark:text-white ml-auto mr-2 cursor-pointer" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-									<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z"/>
-								</svg>
-							</div>
-						</div>
-					@end
-					<div>
-						<button class="w-11 h-11 relative inline-flex items-center justify-center p-0.5 overflow-hidden text-sm font-medium text-gray-900 rounded-full group bg-gradient-to-br from-pink-500 to-orange-400 group-hover:from-pink-500 group-hover:to-orange-400 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800">
-							<span class="relative px-2 py-2 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-full group-hover:bg-opacity-0">
-								<svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-									<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7 7V5"/>
-								</svg>
-							</span>
-						</button>
-					</div>
+			<div>
+				@if(port == 6)
+				<div class="flex gap-1 items-center">
+					<span class="font-bold">LINK</span>
+					<svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+						<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.2 9.8a3.4 3.4 0 0 0-4.8 0L5 13.2A3.4 3.4 0 0 0 9.8 18l.3-.3m-.3-4.5a3.4 3.4 0 0 0 4.8 0L18 9.8A3.4 3.4 0 0 0 13.2 5l-1 1"/>
+					</svg>
 				</div>
+				@end
 			</div>
 		</div>
+		<div class="grid grid-cols-[80px_1fr] items-center">
+			<label>VLAN port</label>
+			<select id="countries" name="vlan-port" class="bg-white text-xs inline-block border max-w-64 border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+				<option selected>Choose a VLAN Port</option>
+				<option value="US">United States</option>
+				<option value="CA">Canada</option>
+				<option value="FR">France</option>
+				<option value="DE">Germany</option>
+			</select>
+		</div>
+		<div class="grid grid-cols-[80px_1fr]">
+			<label class="w-[80px] mt-4">VLAN Egress</label>
+			<div x-data="{ ports: [{{'1,2,3,4,5'}}]}" class="flex flex-wrap gap-2 items-center">
+				<template x-for="port in ports" :key="port">
+					<div class="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 flex flex-col">
+						<div class="border-b p-1 flex items-center justify-between">
+							<select id="countries" name="egress-{{port}}" class="border-none p-0 text-gray-900 text-sm rounded-lg focus:ring-0 focus:border-none block w-full dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-0 dark:focus:border-none">
+								<option selected>--</option>
+								<option value="1120">1120 - administrativo</option>
+								<option value="1130">1130 - dti</option>
+								<option value="1140">1140 - docentes</option>
+								<option value="1150">1150 - secretaria</option>
+							</select>
+						</div>
+						<div class="flex items-center">
+							<span class="border-r w-9/12 p-1 flex justify-between items-center">
+								<select id="countries" class="border-none p-0 text-gray-900 text-xs rounded-lg focus:ring-0 focus:border-none block w-full dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-0 dark:focus:border-none">
+									<option value="tagged">tagged</option>
+									<option value="untagged">untagged</option>
+								</select>
+							</span>
+							<svg @click="ports = ports.filter(p => p !== port)" class="w-5 h-5 text-gray-800 dark:text-white ml-auto mr-2 cursor-pointer" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+								<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z"/>
+							</svg>
+						</div>
+					</div>
+				</template>
+				<button type="button" @click="ports.push(ports.length + 1)" class="w-11 h-11 relative inline-flex items-center justify-center p-0.5 overflow-hidden text-sm font-medium text-gray-900 rounded-full group bg-gradient-to-br from-pink-500 to-orange-400 group-hover:from-pink-500 group-hover:to-orange-400 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800">
+					<span class="relative px-2 py-2 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-full group-hover:bg-opacity-0">
+						<svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+							<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7 7V5"/>
+						</svg>
+					</span>
+				</button>
+			</div>
+			<div>
+			</div>
+		</div>
+	</div>
 	@end
-</div>
+</form>
+<script>
+	document.body.addEventListener('htmx:configRequest', (event) => {
+		console.log(document.querySelector('input[name="_csrf"]').value)
+		event.detail.headers['X-CSRF-TOKEN'] = document.querySelector('input[name="_csrf"]').value;
+	});
+</script>
