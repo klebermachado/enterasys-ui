@@ -1,6 +1,8 @@
 import { inject } from '@adonisjs/core'
-import HtmxService from '../services/htmx_service.js'
+import HtmxService from '#services/htmx_service'
 import { HttpContext } from '@adonisjs/http-server'
+
+import { generateRandomID } from './../helpers/utils.ts'
 
 @inject()
 export default class SwitchesController {
@@ -19,11 +21,11 @@ export default class SwitchesController {
   }
 
   async update({ params, request }: HttpContext) {
-    console.log('atualizando' + params.id, request.body())
+    // console.log('atualizando' + params.id, request.body())
   }
 
   async vlansPage({ params }: HttpContext) {
-    return this.hx.render('pages/switches/vlans', { id: params.id })
+    return this.hx.render('pages/switches/vlans', { id: params.id, generateRandomID })
   }
 
   async portsPage({ params }: HttpContext) {

@@ -1,7 +1,7 @@
 // import type { HttpContext } from '@adonisjs/core/http'
 
 import { inject } from '@adonisjs/core'
-import HtmxService from '../services/htmx_service.js'
+import HtmxService from '#services/htmx_service'
 
 @inject()
 export default class VlansController {
