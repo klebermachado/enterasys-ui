@@ -1,13 +1,13 @@
 <div class="flex gap-3 flex-wrap bg-secondary-50 p-4 rounded-md border">
 	<div class="w-full mb-6">
-		<h2 class="text-lg font-bold">Switch A</h2>
+		<h2 class="text-lg font-bold">Switch A (10.0.0.3 - swa.infra.domain)</h2>
 		<p class="text-xs text-gray-600">Sala de telecomunicações do Pavilhão de aulas</p>
 	</div>
-	@each(port in [1,2,3,4,5,6,7,8,9])
+	@each(port in [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24])
 		<div class="h-14 w-16 border relative mt-4 mb-6 bg-white">
 			<p class="absolute text-gray-500 text-xs -top-4 left-0 right-0 text-center">ge.1.{{port}}</p>
-			<div class="h-2 w-2 bg-green-400 top-0 left-0 absolute"></div>
-			<div class="h-2 w-2 bg-green-400 top-0 right-0 absolute animate-background"></div>
+			<div class="h-2 w-2 bg-[#69dd4c] top-0 left-0 absolute"></div>
+			<div class="h-2 w-2 bg-[#69dd4c] top-0 right-0 absolute animate-background"></div>
 			<div class="flex justify-center gap-1 absolute bottom-0 left-0 right-0">
 				@each(contatct in [1,1,1,1,1,1,1,1])
 					<div class="w-[1px] bg-yellow-400 h-4"></div>
