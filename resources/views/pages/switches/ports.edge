@@ -1,1 +1,18 @@
 <p>ports.edge</p>
+
+<div class="flex gap-3 flex-wrap bg-secondary-50 p-4 rounded-md">
+@each(port in [1,2,3,4,5,6,7,8,9])
+	<div class="h-14 w-16 border relative mt-4 mb-6 bg-white">
+		<span class="absolute text-gray-500 text-xs -top-4">ge.1.{{port}}</span>
+		<div class="h-2 w-2 bg-green-500 top-0 left-0 absolute"></div>
+		<div class="h-2 w-2 bg-green-500 top-0 right-0 absolute"></div>
+		<div class="flex justify-center gap-1 absolute bottom-0 left-0 right-0">
+			@each(contatct in [1,1,1,1,1,1,1,1])
+				<div class="w-[1px] bg-yellow-400 h-4"></div>
+			@end
+		</div>
+		<button type="button" class="-bottom-6 left-0 right-0 absolute text-center text-green-600 font-bold">UP</button>
+		<p class="w-full text-center text-gray-500 mt-3 text-xs">1.0G</p>
+	</div>
+@end
+</div>

@@ -20,7 +20,7 @@ export default class SwitchesController {
     return this.hx.render('pages/switches/create')
   }
 
-  async update({ params, request }: HttpContext) {
+  async updateVlans({ params, request }: HttpContext) {
     // console.log('atualizando' + params.id, request.body())
   }
 
