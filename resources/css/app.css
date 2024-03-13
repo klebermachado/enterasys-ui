@@ -12,3 +12,16 @@ body {
   height: 100%;
   width: 100%;
 }
+
+@keyframes changeBackground {
+  0% {
+    background-color: #fff;
+  }
+  100% {
+    background-color: rgb(190, 221, 76);
+  }
+}
+
+.animate-background {
+  animation: changeBackground 200ms infinite;
+}
