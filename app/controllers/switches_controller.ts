@@ -3,6 +3,7 @@ import HtmxService from '#services/htmx_service'
 import { HttpContext } from '@adonisjs/http-server'
 
 import { generateRandomID } from './../helpers/utils.ts'
+import CommandSshService from '../services/command_ssh_service.ts'
 
 @inject()
 export default class SwitchesController {
@@ -36,6 +37,16 @@ export default class SwitchesController {
   }
 
   async configPage({ params }: HttpContext) {
+    const commands = new CommandSshService({
+      host: '10.10.0.3',
+    })
+
+    commands.append('show vlan port')
+    commands.append('show port status')
+
+    const response = await commands.commit()
+    console.log(response)
+
     return this.hx.render(['pages/switches/index', 'pages/switches/config'], { id: params.id })
   }
 

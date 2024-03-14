@@ -15,10 +15,10 @@ body {
 
 @keyframes changeBackground {
   0% {
-    background-color: #fff;
+    background-color: #a8e698;
   }
   100% {
-    background-color: rgb(190, 221, 76);
+    background-color: #69dd4c;
   }
 }
 
