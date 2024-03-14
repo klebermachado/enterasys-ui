@@ -25,18 +25,21 @@ export default class SwitchesController {
   }
 
   async vlansPage({ params }: HttpContext) {
-    return this.hx.render('pages/switches/vlans', { id: params.id, generateRandomID })
+    return this.hx.render(['pages/switches/index', 'pages/switches/vlans'], {
+      id: params.id,
+      generateRandomID,
+    })
   }
 
   async portsPage({ params }: HttpContext) {
-    return this.hx.render('pages/switches/ports', { id: params.id })
+    return this.hx.render(['pages/switches/index', 'pages/switches/ports'], { id: params.id })
   }
 
   async configPage({ params }: HttpContext) {
-    return this.hx.render('pages/switches/config', { id: params.id })
+    return this.hx.render(['pages/switches/index', 'pages/switches/config'], { id: params.id })
   }
 
   async backupPage({ params }: HttpContext) {
-    return this.hx.render('pages/switches/backup', { id: params.id })
+    return this.hx.render(['pages/switches/index', 'pages/switches/backup'], { id: params.id })
   }
 }

@@ -1,14 +1,28 @@
-<ul x-data="{ active: 'vlan' }" class="flex justify-between mb-6 bg-secondary-100 rounded-3xl max-w-lg mx-auto" hx-boost="true" hx-target="#switch-container" hx-trigger="load" hx-get="/switches/{{id}}/vlans">
+<ul x-data="navigationBar()" class="flex justify-between mb-6 bg-secondary-100 rounded-3xl max-w-lg mx-auto" hx-boost="true" hx-target="#switch-container">
 	<li>
-		<button class="px-6 py-1 hover:bg-secondary-200 rounded-3xl inline-block" :class="{ 'bg-secondary-300': active === 'vlan'}" @click="active = 'vlan'" hx-get="/switches/{{id}}/vlans">VLANS</button>
+		<a href="/switches/{{id}}/vlans" class="px-6 py-1 hover:bg-secondary-200 rounded-3xl inline-block" :class="{ 'bg-secondary-300': isActiveLink('vlan')}" @click="activeLink = 'vlan'">VLANS</a>
 	</li>
 	<li>
-		<button class="px-6 py-1 hover:bg-secondary-200 rounded-3xl inline-block" :class="{ 'bg-secondary-300': active === 'port'}" @click="active = 'port'" hx-get="/switches/{{id}}/ports">Port status</button>
+		<a href="/switches/{{id}}/ports" class="px-6 py-1 hover:bg-secondary-200 rounded-3xl inline-block" :class="{ 'bg-secondary-300': isActiveLink('ports')}" @click="activeLink = 'ports'">Port status</a>
 	</li>
 	<li>
-		<button class="px-6 py-1 hover:bg-secondary-200 rounded-3xl inline-block" :class="{ 'bg-secondary-300': active === 'config'}" @click="active = 'config'" hx-get="/switches/{{id}}/config">Config</button>
+		<a href="/switches/{{id}}/config" class="px-6 py-1 hover:bg-secondary-200 rounded-3xl inline-block" :class="{ 'bg-secondary-300': isActiveLink('config')}" @click="activeLink = 'config'">Config</a>
 	</li>
 	<li>
-		<button class="px-6 py-1 hover:bg-secondary-200 rounded-3xl inline-block" :class="{ 'bg-secondary-300': active === 'backup'}" @click="active = 'backup'" hx-get="/switches/{{id}}/backup">Backup</button>
+		<a href="/switches/{{id}}/backup" class="px-6 py-1 hover:bg-secondary-200 rounded-3xl inline-block" :class="{ 'bg-secondary-300': isActiveLink('backup')}" @click="activeLink = 'backup'">Backup</a>
 	</li>
+<script>
+	function navigationBar() {
+		return {
+			activeLink: window.location.pathname,
+			init() {
+					this.activeLink = window.location.pathname
+					console.log(this.activeLink)
+			},
+			isActiveLink(item) {
+				return this.activeLink.includes(item)
+			},
+		}
+	}
+</script>
 </ul>

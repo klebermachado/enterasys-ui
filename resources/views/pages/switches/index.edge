@@ -1,4 +1,8 @@
 @component('components/container')
 	@!component('components/switch-navigate', { id })
-	<div id="switch-container"></div>
+	<div id="switch-container">
+		@if (pageLevel2)
+			@include(pageLevel2)
+		@end
+	</div>
 @endcomponent
