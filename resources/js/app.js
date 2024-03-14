@@ -43,4 +43,3 @@ window.waitForHtmx = (cb) => {
 		count++
 	}, 100)
 }
-

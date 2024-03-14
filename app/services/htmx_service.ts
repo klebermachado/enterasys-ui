@@ -9,7 +9,7 @@ export default class HtmxService {
     if (!template) {
       template = 'layouts/app'
     }
-    if (this.ctx.request.header('HX-Request')) {
+    if (this.ctx.request.header('HX-Target')) {
       if (Array.isArray(page)) {
         return this.ctx.view.render(page[page.length - 1], content)
       } else {
