@@ -4,7 +4,7 @@ export default class PortStatusCmdService {
   constructor(private ssh: CommandSshService) {}
 
   async send(): Promise<any> {
-    this.ssh.append('show vlan port\n')
+    this.ssh.append('show port status\n')
     const response = await this.ssh.commit()
     return this.parse(response)
   }
@@ -13,22 +13,25 @@ export default class PortStatusCmdService {
     const rows = raw.split('\n')
 
     const regexPortName = /^[a-z]+\.[0-9]+\.[0-9]+/gm
-    const regexPortVlan = /(?<=(^[a-z]*\.[0-9]+\.[0-9]+\s+))[0-9]+/gm
-    const regexUntagged = /(?<=untagged:\s)[0-9]+/gm
-    const regexTagged = /(?<=\stagged:\s)[0-9,]+/gm
+    const regexPortAlias = /(?<=(^[a-z]+\.[0-9]+\.[0-9]+\s+))(?!(Down|Up))[a-zA-z-+=\#\/]+/gm
+    const regexOperationStatus = /(?<=(^[a-z]+\.[0-9]+\.[0-9]+.*))(Down|Up)/gm
+    const regexAdminStatus = /(?<=(^[a-z]+\.[0-9]+\.[0-9]+.*)(Down|Up)\s+)(Down|Up)/gm
+    const regexSpeed = /(?<=(^[a-z]+\.[0-9]+\.[0-9]+.*)(Down|Up)\s+(Down|Up)\s+)[a-zA-Z0-9.\/]+/gm
 
     const response = rows
       .map((row) => {
         const portName = row.match(regexPortName) ?? []
-        const portVlan = row.match(regexPortVlan) ?? []
-        const untagged = row.match(regexUntagged) ?? []
-        const tagged = row.match(regexTagged)?.map((t) => t.split(',')) ?? []
+        const portAlias = row.match(regexPortAlias) ?? []
+        const operationStatus = row.match(regexOperationStatus) ?? []
+        const adminStatus = row.match(regexAdminStatus) ?? []
+        const speed = row.match(regexSpeed) ?? []
 
         return {
           portName: portName[0],
-          portVlan: portVlan[0] ?? '',
-          untagged: untagged[0] ?? '',
-          tagged: tagged[0] ?? '',
+          portAlias: portAlias[0] ?? '',
+          operationStatus: operationStatus[0] ?? '',
+          adminStatus: adminStatus[0] ?? '',
+          speed: speed[0] ?? '',
         }
       })
       .filter((port) => port.portName !== undefined)
