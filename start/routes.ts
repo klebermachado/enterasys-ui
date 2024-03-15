@@ -12,5 +12,7 @@ router.get('switches/:id/config', [SwitchesController, 'configPage'])
 router.get('switches/:id/backup', [SwitchesController, 'backupPage'])
 router.put('switches/:id/vlans', [SwitchesController, 'updateVlans'])
 router.get('vlans', [VlansController, 'create'])
+router.post('vlans', [VlansController, 'store'])
+router.delete('vlans/:id', [VlansController, 'destroy'])
 
 router.get('architecture', [ArchitecturesController, 'index'])

@@ -6,6 +6,9 @@ import { generateRandomID } from './../helpers/utils.ts'
 import CommandSshService from '../services/command_ssh_service.ts'
 import PortStatusCmdService from '../services/parse/port_status_cmd_service.ts'
 import VlanPortCmdService from '../services/parse/vlan_port_cmd_service.ts'
+import ShowHostVlanService from '../services/parse/show_host_vlan_service.ts'
+import ShowIpAddressService from '../services/parse/show_ip_address_service.ts'
+import ShowSystemService from '../services/parse/show_system_service.ts'
 
 @inject()
 export default class SwitchesController {
@@ -45,10 +48,19 @@ export default class SwitchesController {
     // const vlanPort = new VlanPortCmdService(cmd)
     // const response = await vlanPort.send()
 
-    const portStatus = new PortStatusCmdService(cmd)
-    const response = await portStatus.send()
+    // const portStatus = new PortStatusCmdService(cmd)
+    // const response = await portStatus.send()
 
-    console.log(response)
+    // const hostVlan = new ShowHostVlanService(cmd)
+    // const response = await hostVlan.send()
+
+    // const ipAddress = new ShowIpAddressService(cmd)
+    // const response = await ipAddress.send()
+
+    // const systemInfo = new ShowSystemService(cmd)
+    // const response = await systemInfo.send()
+
+    // console.log(response)
 
     return this.hx.render(['pages/switches/index', 'pages/switches/config'], { id: params.id })
   }
