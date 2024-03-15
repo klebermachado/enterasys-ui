@@ -5,7 +5,11 @@ export default class VlanPortCmdService {
 
   async send(): Promise<any> {
     this.ssh.append('show vlan port\n')
+
+    await this.ssh.connect()
     const response = await this.ssh.commit()
+    this.ssh.disconnect()
+
     return this.parse(response)
   }
 

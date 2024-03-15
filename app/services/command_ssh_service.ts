@@ -20,37 +20,47 @@ export default class CommandSshService {
     }
   }
 
+  connect(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.conn.on('ready', () => resolve()).connect(this.credentials)
+      this.conn.on('error', (err: any) => {
+        console.log('error', err)
+        return reject(err)
+      })
+    })
+  }
+
   append(command: string) {
     this.commands.push(command + '\n')
   }
 
   async commit(): Promise<string> {
-    return new Promise((resolve, reject) => {
-      this.conn
-        .on('ready', () => {
-          this.conn.shell((err: any, stream: any) => {
-            if (err) reject(err)
-            let dataBuffer = ''
+    return new Promise(async (resolve, reject) => {
+      this.conn.shell((err: any, stream: any) => {
+        if (err) reject(err)
+        let dataBuffer = ''
 
-            stream
-              .on('close', () => {
-                this.conn.end()
-                resolve(dataBuffer)
-              })
-              .on('data', (data: string) => {
-                dataBuffer += data
-              })
-              .on('end', () => {
-                resolve(dataBuffer)
-              })
-
-            for (const command of this.commands) {
-              stream.write(command)
-            }
-            stream.end('exit\n')
+        stream
+          .on('close', () => {
+            this.conn.end()
+            resolve(dataBuffer)
           })
-        })
-        .connect(this.credentials)
+          .on('data', (data: string) => {
+            dataBuffer += data
+          })
+          .on('end', () => {
+            resolve(dataBuffer)
+          })
+
+        for (const command of this.commands) {
+          stream.write(command)
+        }
+        stream.end()
+      })
     })
+  }
+
+  disconnect() {
+    this.conn.end()
   }
 }
