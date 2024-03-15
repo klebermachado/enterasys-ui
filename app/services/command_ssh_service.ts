@@ -23,10 +23,7 @@ export default class CommandSshService {
   connect(): Promise<void> {
     return new Promise((resolve, reject) => {
       this.conn.on('ready', () => resolve()).connect(this.credentials)
-      this.conn.on('error', (err: any) => {
-        console.log('error', err)
-        return reject(err)
-      })
+      this.conn.on('error', (err: any) => reject(err))
     })
   }
 

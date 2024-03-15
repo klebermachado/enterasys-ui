@@ -4,7 +4,7 @@ export default class PortStatusCmdService {
   constructor(private ssh: CommandSshService) {}
 
   async send(): Promise<any> {
-    this.ssh.append('show port status\n')
+    this.ssh.append('show port status')
 
     await this.ssh.connect()
     const response = await this.ssh.commit()
