@@ -9,6 +9,7 @@ import VlanPortCmdService from '../services/parse/vlan_port_cmd_service.ts'
 import ShowHostVlanService from '../services/parse/show_host_vlan_service.ts'
 import ShowIpAddressService from '../services/parse/show_ip_address_service.ts'
 import ShowSystemService from '../services/parse/show_system_service.ts'
+import Switch from '../models/switch.ts'
 
 @inject()
 export default class SwitchesController {
@@ -24,6 +25,13 @@ export default class SwitchesController {
 
   async create() {
     return this.hx.render('pages/switches/create')
+  }
+
+  async store({ request }: HttpContext) {
+    const data = request.only(['name', 'ip_address', 'hostname', 'password', 'user'])
+    await Switch.create(data)
+
+    return this.hx.render('pages/home')
   }
 
   async updateVlans({ params, request }: HttpContext) {
