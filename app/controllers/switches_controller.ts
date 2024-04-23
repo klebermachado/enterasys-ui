@@ -28,10 +28,10 @@ export default class SwitchesController {
   }
 
   async store({ request }: HttpContext) {
-    const data = request.only(['name', 'ip_address', 'hostname', 'password', 'user'])
-    await Switch.create(data)
+    const data = request.only(['name', 'ip', 'hostname', 'location', 'user', 'password'])
 
-    return this.hx.render('pages/home')
+    await Switch.create(data)
+    return this.hx.render('pages/switches/create')
   }
 
   async updateVlans({ params, request }: HttpContext) {

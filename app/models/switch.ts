@@ -6,25 +6,22 @@ export default class Switch extends BaseModel {
   declare id: number
 
   @column()
-  declare vlanId: number
+  declare name: string
 
   @column()
-  declare name: number
+  declare ip: string
 
   @column()
-  declare ipAddress: number
+  declare hostname: string
 
   @column()
-  declare hostname: number
+  declare location: string
 
   @column()
-  declare user: number
+  declare user: string
 
   @column()
-  declare password: number
-
-  @column.dateTime()
-  declare last_update: DateTime
+  declare password: string
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
