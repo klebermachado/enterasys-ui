@@ -9,6 +9,10 @@ import Vlan from '../models/vlan.ts'
 export default class VlansController {
   constructor(private hx: HtmxService) {}
 
+  async all() {
+    return Vlan.all()
+  }
+
   async create() {
     const vlans = (await Vlan.all()).sort((a, b) => parseInt(a.tag) - parseInt(b.tag))
     return this.hx.render('pages/vlans/index', { vlans })
@@ -16,18 +20,13 @@ export default class VlansController {
 
   async store({ request }: HttpContext) {
     const data = request.only(['tag', 'description'])
-
-    await Vlan.create(data)
-    const vlans = (await Vlan.all()).sort((a, b) => parseInt(a.tag) - parseInt(b.tag))
-
-    return this.hx.render('pages/vlans/index', { vlans })
+    const vlan = await Vlan.create(data)
+    return vlan
   }
 
   async destroy({ params }: HttpContext) {
     const vlan = await Vlan.find(params.id)
     await vlan?.delete()
-    const vlans = (await Vlan.all()).sort((a, b) => parseInt(a.tag) - parseInt(b.tag))
-
-    return this.hx.render('pages/vlans/index', { vlans })
+    return true
   }
 }
