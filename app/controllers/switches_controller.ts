@@ -15,8 +15,9 @@ import Switch from '../models/switch.ts'
 export default class SwitchesController {
   constructor(private hx: HtmxService) {}
 
-  async index({ params }: HttpContext) {
-    return this.hx.render('pages/switches/index', { id: 23 })
+  async all({ params }: HttpContext) {
+    const switches = await Switch.all()
+    return switches
   }
 
   async show() {
@@ -30,8 +31,8 @@ export default class SwitchesController {
   async store({ request }: HttpContext) {
     const data = request.only(['name', 'ip', 'hostname', 'location', 'user', 'password'])
 
-    await Switch.create(data)
-    return this.hx.render('pages/switches/create')
+    const sw = await Switch.create(data)
+    return sw
   }
 
   async updateVlans({ params, request }: HttpContext) {

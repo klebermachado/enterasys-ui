@@ -6,6 +6,7 @@ import ArchitecturesController from '../app/controllers/architectures_controller
 router.get('/', [SwitchesController, 'show'])
 router.get('switches/create', [SwitchesController, 'create'])
 router.post('switches', [SwitchesController, 'store'])
+router.get('switches', [SwitchesController, 'all'])
 router.get('switches/:id', [SwitchesController, 'index'])
 router.get('switches/:id/vlans', [SwitchesController, 'vlansPage'])
 router.get('switches/:id/ports', [SwitchesController, 'portsPage'])
