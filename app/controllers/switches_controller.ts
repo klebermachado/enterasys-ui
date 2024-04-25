@@ -10,6 +10,7 @@ import ShowHostVlanService from '../services/parse/show_host_vlan_service.ts'
 import ShowIpAddressService from '../services/parse/show_ip_address_service.ts'
 import ShowSystemService from '../services/parse/show_system_service.ts'
 import Switch from '../models/switch.ts'
+import Port from '../models/port.ts'
 
 @inject()
 export default class SwitchesController {
@@ -32,6 +33,21 @@ export default class SwitchesController {
     const data = request.only(['name', 'ip', 'hostname', 'location', 'user', 'password'])
 
     const sw = await Switch.create(data)
+
+    const cmd = new CommandSshService({
+      host: sw.ip,
+    })
+    const vlanPort = new PortStatusCmdService(cmd)
+    const response = await vlanPort.send()
+    const ports = response.map((port) => {
+      return {
+        switchId: sw.id,
+        slug: port.portName,
+        alias: port.portAlias,
+      }
+    })
+    Port.createMany(ports)
+    await sw.reload()
     return sw
   }
 
