@@ -9,8 +9,8 @@ import VlanPortCmdService from '../services/parse/vlan_port_cmd_service.ts'
 import ShowHostVlanService from '../services/parse/show_host_vlan_service.ts'
 import ShowIpAddressService from '../services/parse/show_ip_address_service.ts'
 import ShowSystemService from '../services/parse/show_system_service.ts'
-import Switch from '../models/switch.ts'
-import Port from '../models/port.ts'
+import Switch from '#models/switch'
+import Port from '#models/port'
 
 @inject()
 export default class SwitchesController {
@@ -21,8 +21,9 @@ export default class SwitchesController {
     return switches
   }
 
-  async show() {
-    return this.hx.render('pages/home')
+  async show({ params }: HttpContext) {
+    const sw = await Switch.query().where('id', params.id).preload('ports')
+    return sw[0]
   }
 
   async create() {
@@ -32,23 +33,26 @@ export default class SwitchesController {
   async store({ request }: HttpContext) {
     const data = request.only(['name', 'ip', 'hostname', 'location', 'user', 'password'])
 
-    const sw = await Switch.create(data)
-
     const cmd = new CommandSshService({
-      host: sw.ip,
+      host: data.ip,
     })
+
     const vlanPort = new PortStatusCmdService(cmd)
     const response = await vlanPort.send()
-    const ports = response.map((port) => {
+
+    const sw = await Switch.create(data)
+
+    const ports = response.map((port: any) => {
       return {
         switchId: sw.id,
         slug: port.portName,
         alias: port.portAlias,
       }
     })
-    Port.createMany(ports)
-    await sw.reload()
-    return sw
+    await Port.createMany(ports)
+
+    const swUpdated = await Switch.query().where('id', sw.id).preload('ports')
+    return swUpdated
   }
 
   async updateVlans({ params, request }: HttpContext) {

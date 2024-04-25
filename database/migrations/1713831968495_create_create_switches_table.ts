@@ -9,10 +9,11 @@ export default class extends BaseSchema {
 
       table.string('name', 255).notNullable()
       table.string('ip', 255).notNullable()
-      table.string('hostname', 255).notNullable()
-      table.string('location', 255).notNullable()
+      table.string('hostname', 255)
+      table.string('location', 255)
       table.string('user', 255).notNullable()
-      table.string('password', 255).notNullable()
+      table.string('password', 255)
+      table.timestamp('last_sync')
 
       table.timestamp('created_at')
       table.timestamp('updated_at')

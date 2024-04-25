@@ -1,5 +1,7 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column } from '@adonisjs/lucid/orm'
+import type { HasMany } from '@adonisjs/lucid/types/relations'
+import { BaseModel, column, hasMany } from '@adonisjs/lucid/orm'
+import Port from '#models/port'
 
 export default class Switch extends BaseModel {
   @column({ isPrimary: true })
@@ -28,4 +30,7 @@ export default class Switch extends BaseModel {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime
+
+  @hasMany(() => Port)
+  declare ports: HasMany<typeof Port>
 }

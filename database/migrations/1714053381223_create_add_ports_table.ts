@@ -8,7 +8,7 @@ export default class extends BaseSchema {
       table.increments('id')
       table.integer('switch_id').unsigned()
       table.integer('vlan_id').unsigned()
-      table.string('slug')
+      table.string('port_name')
       table.string('alias')
       table.string('description')
       table.foreign('switch_id').references('switches.id')
