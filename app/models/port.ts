@@ -12,7 +12,7 @@ export default class Port extends BaseModel {
   declare vlanId: number
 
   @column()
-  declare slug: number
+  declare portName: number
 
   @column()
   declare alias: number

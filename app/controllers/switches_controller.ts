@@ -45,7 +45,7 @@ export default class SwitchesController {
     const ports = response.map((port: any) => {
       return {
         switchId: sw.id,
-        slug: port.portName,
+        portName: port.portName,
         alias: port.portAlias,
       }
     })
