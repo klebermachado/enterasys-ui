@@ -11,6 +11,7 @@ import ShowIpAddressService from '../services/parse/show_ip_address_service.ts'
 import ShowSystemService from '../services/parse/show_system_service.ts'
 import Switch from '#models/switch'
 import Port from '#models/port'
+import SetPortAliasService from '../services/parse/set_port_alias_service.js'
 
 @inject()
 export default class SwitchesController {
@@ -22,8 +23,8 @@ export default class SwitchesController {
   }
 
   async show({ params }: HttpContext) {
-    const sw = await Switch.query().where('id', params.id).preload('ports')
-    return sw[0]
+    const sw = await Switch.query().where('id', params.id).preload('ports').first()
+    return sw
   }
 
   async create() {
@@ -51,12 +52,35 @@ export default class SwitchesController {
     })
     await Port.createMany(ports)
 
-    const swUpdated = await Switch.query().where('id', sw.id).preload('ports')
+    const swUpdated = await Switch.query().where('id', sw.id).preload('ports').first()
     return swUpdated
   }
 
   async updateVlans({ params, request }: HttpContext) {
     // console.log('atualizando' + params.id, request.body())
+  }
+
+  async updatePort({ params, request, response }: HttpContext) {
+    const data = request.only(['alias', 'description', 'portName'])
+    const sw = await Switch.query().where('id', params.id).first()
+
+    if (!sw) {
+      return { error: 'Switch not found' }
+    }
+
+    const cmd = new CommandSshService({
+      host: sw.ip,
+    })
+    const portAlias = new SetPortAliasService(cmd)
+    await portAlias.send(data.portName, data.alias)
+
+    await Port.query()
+      .where('switchId', sw.id)
+      .where('portName', data.portName)
+      .update({ alias: data.alias, description: data.description })
+
+    const ports = await Port.query().where('switchId', sw.id)
+    return response.status(200).send(ports)
   }
 
   async vlansPage({ params }: HttpContext) {

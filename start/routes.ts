@@ -9,7 +9,10 @@ router.post('switches', [SwitchesController, 'store'])
 router.get('switches', [SwitchesController, 'all'])
 router.get('switches/:id', [SwitchesController, 'show'])
 router.get('switches/:id/vlans', [SwitchesController, 'vlansPage'])
+
 router.get('switches/:id/ports', [SwitchesController, 'portsPage'])
+router.put('switches/:id/ports', [SwitchesController, 'updatePort'])
+
 router.get('switches/:id/config', [SwitchesController, 'configPage'])
 router.get('switches/:id/backup', [SwitchesController, 'backupPage'])
 router.put('switches/:id/vlans', [SwitchesController, 'updateVlans'])

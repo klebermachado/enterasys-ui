@@ -31,6 +31,10 @@ export default class CommandSshService {
     this.commands.push(command + '\n')
   }
 
+  clear() {
+    this.commands = []
+  }
+
   async commit(): Promise<string> {
     return new Promise(async (resolve, reject) => {
       this.conn.shell((err: any, stream: any) => {
