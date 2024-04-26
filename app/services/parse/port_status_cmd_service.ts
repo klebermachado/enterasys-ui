@@ -3,7 +3,7 @@ import CommandSshService from '../command_ssh_service.ts'
 export default class PortStatusCmdService {
   constructor(private ssh: CommandSshService) {}
 
-  async send(): Promise<any> {
+  async send(): Promise<any[]> {
     this.ssh.append('show port status')
 
     await this.ssh.connect()
@@ -13,7 +13,7 @@ export default class PortStatusCmdService {
     return this.parse(response)
   }
 
-  private parse(raw: string): any {
+  private parse(raw: string): any[] {
     const rows = raw.split('\n')
 
     const regexPortName = /^[a-z]+\.[0-9]+\.[0-9]+/gm

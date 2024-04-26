@@ -27,6 +27,17 @@ export default class SwitchesController {
     return sw
   }
 
+  async showPortStatus({ params, response }: HttpContext) {
+    const sw: any = await Switch.query().where('id', params.id).first()
+    const conn = new CommandSshService({
+      host: sw.ip,
+    })
+
+    const portStatus = new PortStatusCmdService(conn)
+    const data = await portStatus.send()
+    return response.status(200).send(data)
+  }
+
   async create() {
     return this.hx.render('pages/switches/create')
   }
