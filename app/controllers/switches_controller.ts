@@ -42,29 +42,33 @@ export default class SwitchesController {
     return this.hx.render('pages/switches/create')
   }
 
-  async store({ request }: HttpContext) {
+  async store({ request, response }: HttpContext) {
     const data = request.only(['name', 'ip', 'hostname', 'location', 'user', 'password'])
 
-    const cmd = new CommandSshService({
-      host: data.ip,
-    })
+    try {
+      const cmd = new CommandSshService({
+        host: data.ip,
+      })
 
-    const vlanPort = new PortStatusCmdService(cmd)
-    const response = await vlanPort.send()
+      const vlanPort = new PortStatusCmdService(cmd)
+      const dataSw = await vlanPort.send()
 
-    const sw = await Switch.create(data)
+      const sw = await Switch.create(data)
 
-    const ports = response.map((port: any) => {
-      return {
-        switchId: sw.id,
-        portName: port.portName,
-        alias: port.portAlias,
-      }
-    })
-    await Port.createMany(ports)
+      const ports = dataSw.map((port: any) => {
+        return {
+          switchId: sw.id,
+          portName: port.portName,
+          alias: port.portAlias,
+        }
+      })
+      await Port.createMany(ports)
 
-    const swUpdated = await Switch.query().where('id', sw.id).preload('ports').first()
-    return swUpdated
+      const swUpdated = await Switch.query().where('id', sw.id).preload('ports').first()
+      return swUpdated
+    } catch (error) {
+      return response.status(500).send({ error: 'Error connecting to switch' })
+    }
   }
 
   async updateVlans({ params, request }: HttpContext) {
