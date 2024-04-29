@@ -12,6 +12,7 @@ import ShowSystemService from '../services/parse/show_system_service.ts'
 import Switch from '#models/switch'
 import Port from '#models/port'
 import SetPortAliasService from '../services/parse/set_port_alias_service.js'
+import SetAdminPortStatus from '../services/parse/set_admin_port_status_service.js'
 
 @inject()
 export default class SwitchesController {
@@ -103,6 +104,28 @@ export default class SwitchesController {
       id: params.id,
       generateRandomID,
     })
+  }
+
+  async togglePort({ params, response, request }: HttpContext) {
+    const { id, portName } = params
+    const { toggle } = request.only(['toggle'])
+
+    const sw = await Switch.query().where('id', id).first()
+
+    if (!sw) {
+      return { error: 'Switch not found' }
+    }
+
+    const cmd = new CommandSshService({
+      host: sw.ip,
+    })
+    const setPortStatus = new SetAdminPortStatus(cmd)
+    await setPortStatus.send(portName, toggle)
+
+    const showPortStatus = await new PortStatusCmdService(cmd)
+    const portStatus = await showPortStatus.send(portName)
+
+    return response.status(200).send(portStatus[0])
   }
 
   async portsPage({ params }: HttpContext) {

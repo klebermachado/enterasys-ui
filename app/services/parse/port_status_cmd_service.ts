@@ -3,8 +3,12 @@ import CommandSshService from '../command_ssh_service.ts'
 export default class PortStatusCmdService {
   constructor(private ssh: CommandSshService) {}
 
-  async send(): Promise<any[]> {
-    this.ssh.append('show port status')
+  async send(portName?: string): Promise<any[]> {
+    if (portName) {
+      this.ssh.append(`show port status ${portName}`)
+    } else {
+      this.ssh.append('show port status')
+    }
 
     await this.ssh.connect()
     const response = await this.ssh.commit()
