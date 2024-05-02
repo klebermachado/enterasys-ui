@@ -14,6 +14,7 @@ router.get('switches/:id/ports', [SwitchesController, 'portsPage'])
 router.put('switches/:id/ports', [SwitchesController, 'updatePort'])
 router.get('switches/:id/ports/status', [SwitchesController, 'showPortStatus'])
 router.post('switches/:id/ports/:portName/toggle', [SwitchesController, 'togglePort'])
+router.post('switches/:id/ports/sync', [SwitchesController, 'syncPorts'])
 
 router.get('switches/:id/config', [SwitchesController, 'configPage'])
 router.get('switches/:id/backup', [SwitchesController, 'backupPage'])

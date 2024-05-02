@@ -128,6 +128,52 @@ export default class SwitchesController {
     return response.status(200).send(portStatus[0])
   }
 
+  async syncPorts({ params }: HttpContext) {
+    const swId = params.id
+    const sw = await Switch.query().preload('ports').where('id', swId).first()
+
+    if (!sw) {
+      return { error: 'Switch not found' }
+    }
+
+    const cmd = new CommandSshService({
+      host: sw.ip,
+    })
+    const vlanPort = new PortStatusCmdService(cmd)
+    const dataSw = await vlanPort.send()
+
+    // merge port status vindo do sw com portas do banco
+    const merge = dataSw
+      .map((portSw: any): any | null => {
+        const portDb = sw.ports.find((p: any) => p.portName === portSw.portName)
+        if (portDb) {
+          return {
+            ...portDb.toJSON(),
+            alias: portSw.portAlias,
+          }
+        }
+        return null
+      })
+      .filter((p) => p !== null)
+
+    const mergePromise = merge.map((port: any): any => {
+      return Port.query().where('id', port.id).update(port)
+    })
+    const show = await Promise.all(mergePromise)
+
+    // apaga as portas do banco que não existem no sw (array filter)
+    const portsToDelete = sw.ports.filter(
+      (port: any) => !dataSw.find((p: any) => p.portName === port.portName)
+    )
+    const portsToDeletePromise = portsToDelete.map((port: any) => {
+      return Port.query().where('id', port.id).delete()
+    })
+    await Promise.all(portsToDeletePromise)
+
+    const ports = await Port.query().where('switchId', sw.id)
+    return ports
+  }
+
   async portsPage({ params }: HttpContext) {
     return this.hx.render(['pages/switches/index', 'pages/switches/ports'], { id: params.id })
   }
