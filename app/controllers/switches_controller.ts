@@ -13,6 +13,8 @@ import Switch from '#models/switch'
 import Port from '#models/port'
 import SetPortAliasService from '../services/parse/set_port_alias_service.js'
 import SetAdminPortStatus from '../services/parse/set_admin_port_status_service.js'
+import ShowConfigService from '../services/parse/show_config_service.js'
+import Config from '../models/config.js'
 
 @inject()
 export default class SwitchesController {
@@ -176,6 +178,21 @@ export default class SwitchesController {
 
   async portsPage({ params }: HttpContext) {
     return this.hx.render(['pages/switches/index', 'pages/switches/ports'], { id: params.id })
+  }
+
+  async getConfig({ params, response }: HttpContext) {
+    const sw = await Switch.query().where('id', params.id).first()
+    const cmd = new CommandSshService({
+      host: sw?.ip,
+    })
+
+    const configCommand = new ShowConfigService(cmd)
+    const config = await configCommand.send()
+
+    const configDB = await Config.firstOrCreate({ switchId: params.id }, { content: config })
+    console.log(configDB.toJSON())
+
+    return response.status(200).send(configDB)
   }
 
   async configPage({ params }: HttpContext) {
