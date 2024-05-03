@@ -181,6 +181,11 @@ export default class SwitchesController {
   }
 
   async getConfig({ params, response }: HttpContext) {
+    const sw = await Switch.query().preload('config').where('id', params.id).firstOrFail()
+    return response.status(200).send(sw.config)
+  }
+
+  async getConfigAndSync({ params, response }: HttpContext) {
     const sw = await Switch.query().where('id', params.id).first()
     const cmd = new CommandSshService({
       host: sw?.ip,
@@ -190,7 +195,6 @@ export default class SwitchesController {
     const config = await configCommand.send()
 
     const configDB = await Config.firstOrCreate({ switchId: params.id }, { content: config })
-    console.log(configDB.toJSON())
 
     return response.status(200).send(configDB)
   }
