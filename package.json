@@ -69,6 +69,7 @@
     "luxon": "^3.4.4",
     "mysql2": "^3.9.2",
     "reflect-metadata": "^0.2.1",
+    "rxjs": "^7.8.1",
     "ssh2": "^1.15.0"
   },
   "eslintConfig": {
