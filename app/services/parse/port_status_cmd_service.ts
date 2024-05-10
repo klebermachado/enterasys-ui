@@ -3,16 +3,17 @@ import CommandSshService from '../command_ssh_service.ts'
 export default class PortStatusCmdService {
   constructor(private ssh: CommandSshService) {}
 
-  async send(portName?: string): Promise<any[]> {
-    if (portName) {
-      this.ssh.append(`show port status ${portName}`)
-    } else {
-      this.ssh.append('show port status')
-    }
+  static getInstance(ssh: CommandSshService): PortStatusCmdService {
+    return new PortStatusCmdService(ssh)
+  }
 
-    await this.ssh.connect()
-    const response = await this.ssh.commit()
-    this.ssh.disconnect()
+  async send(portName?: string): Promise<any[]> {
+    let response = ''
+    if (portName) {
+      response = await this.ssh.exec(`show port status ${portName}`)
+    } else {
+      response = await this.ssh.exec('show port status')
+    }
 
     return this.parse(response)
   }

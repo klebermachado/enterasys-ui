@@ -18,6 +18,8 @@ router.post('switches/:id/ports/sync', [SwitchesController, 'syncPorts'])
 router.get('switches/:id/configAndSync', [SwitchesController, 'getConfigAndSync'])
 router.get('switches/:id/config', [SwitchesController, 'getConfig'])
 
+router.get('test', [SwitchesController, 'test'])
+
 router.get('switches/:id/backup', [SwitchesController, 'backupPage'])
 router.put('switches/:id/vlans', [SwitchesController, 'updateVlans'])
 router.get('vlans', [VlansController, 'all'])

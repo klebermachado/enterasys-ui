@@ -226,4 +226,20 @@ export default class SwitchesController {
   async backupPage({ params }: HttpContext) {
     return this.hx.render(['pages/switches/index', 'pages/switches/backup'], { id: params.id })
   }
+
+  async test({ response }: HttpContext) {
+    console.log('running test endpoint')
+
+    const ssh = await CommandSshService.openConnection({
+      host: '10.10.0.107',
+    })
+    //-----------------
+    const instance = PortStatusCmdService.getInstance(ssh)
+    const a = await instance.send('ge.1.2')
+    const b = await instance.send('ge.1.3')
+
+    //-----------------
+    console.log('fechando a conexao')
+    ssh.disconnect()
+  }
 }
