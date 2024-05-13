@@ -12,6 +12,7 @@ import setAdminPortStatusCmd from '../ssh/set/set_admin_port_status_cmd.js'
 import showPortStatusCmd from '../ssh/show/show_port_status_cmd_cmd.js'
 import showConfigCmd from '../ssh/show/show_config_cmd.js'
 import showIpAddressCmd from '../ssh/show/show_ip_address_cmd.js'
+import showPortAliasCmd from '../ssh/show/show_port_alias_cmd.js'
 
 @inject()
 export default class SwitchesController {
@@ -206,15 +207,11 @@ export default class SwitchesController {
   async test({ response }: HttpContext) {
     console.log('running test endpoint')
 
-    const ssh = await SSH.connect({
-      host: '10.10.0.107',
-    })
-    //-----------------
-    const ipAddress = await showIpAddressCmd(ssh)
-
-    //-----------------
+    const ssh = await SSH.connect({ host: '10.10.0.107' })
+    const portAlias = await showPortAliasCmd(ssh)
+    console.log(portAlias)
     console.log('fechando a conexao')
     ssh.disconnect()
-    return response.status(200).send({ ipAddress })
+    return response.status(200).send({ portAlias })
   }
 }
