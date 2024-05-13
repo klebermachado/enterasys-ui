@@ -2,19 +2,16 @@ import { inject } from '@adonisjs/core'
 import HtmxService from '#services/htmx_service'
 import { HttpContext } from '@adonisjs/http-server'
 
-import { generateRandomID } from './../helpers/utils.ts'
-import CommandSshService from '../services/command_ssh_service.ts'
-import PortStatusCmdService from '../services/parse/port_status_cmd_service.ts'
-import VlanPortCmdService from '../services/parse/vlan_port_cmd_service.ts'
-import ShowHostVlanService from '../services/parse/show_host_vlan_service.ts'
-import ShowIpAddressService from '../services/parse/show_ip_address_service.ts'
-import ShowSystemService from '../services/parse/show_system_service.ts'
+import { generateRandomID } from '../helpers/utils.js'
 import Switch from '#models/switch'
 import Port from '#models/port'
-import SetPortAliasService from '../services/parse/set_port_alias_service.js'
-import SetAdminPortStatus from '../services/parse/set_admin_port_status_service.js'
-import ShowConfigService from '../services/parse/show_config_service.js'
 import Config from '../models/config.js'
+import SSH from '../services/ssh.js'
+import setPortAliasServiceCmd from '../ssh/set/set_port_alias_cmd.js'
+import setAdminPortStatusCmd from '../ssh/set/set_admin_port_status_cmd.js'
+import showPortStatusCmd from '../ssh/show/show_port_status_cmd_cmd.js'
+import showConfigCmd from '../ssh/show/show_config_cmd.js'
+import showIpAddressCmd from '../ssh/show/show_ip_address_cmd.js'
 
 @inject()
 export default class SwitchesController {
@@ -32,12 +29,11 @@ export default class SwitchesController {
 
   async showPortStatus({ params, response }: HttpContext) {
     const sw: any = await Switch.query().where('id', params.id).first()
-    const conn = new CommandSshService({
-      host: sw.ip,
-    })
 
-    const portStatus = new PortStatusCmdService(conn)
-    const data = await portStatus.send()
+    const ssh = await SSH.connect({ host: sw.ip })
+    const data = await showPortStatusCmd(ssh)
+    ssh.disconnect()
+
     return response.status(200).send(data)
   }
 
@@ -49,16 +45,13 @@ export default class SwitchesController {
     const data = request.only(['name', 'ip', 'hostname', 'location', 'user', 'password'])
 
     try {
-      const cmd = new CommandSshService({
-        host: data.ip,
-      })
-
-      const vlanPort = new PortStatusCmdService(cmd)
-      const dataSw = await vlanPort.send()
+      const cmd = await SSH.connect({ host: data.ip })
+      const vlanPorts = await showPortStatusCmd(cmd)
+      cmd.disconnect()
 
       const sw = await Switch.create(data)
 
-      const ports = dataSw.map((port: any) => {
+      const ports = vlanPorts.map((port: any) => {
         return {
           switchId: sw.id,
           portName: port.portName,
@@ -74,7 +67,7 @@ export default class SwitchesController {
     }
   }
 
-  async updateVlans({ params, request }: HttpContext) {
+  async updateVlans() {
     // console.log('atualizando' + params.id, request.body())
   }
 
@@ -86,11 +79,9 @@ export default class SwitchesController {
       return { error: 'Switch not found' }
     }
 
-    const cmd = new CommandSshService({
-      host: sw.ip,
-    })
-    const portAlias = new SetPortAliasService(cmd)
-    await portAlias.send(data.portName, data.alias)
+    const ssh = await SSH.connect({ host: sw.ip })
+    await setPortAliasServiceCmd(ssh, data.portName, data.alias)
+    ssh.disconnect()
 
     await Port.query()
       .where('switchId', sw.id)
@@ -112,40 +103,27 @@ export default class SwitchesController {
     const { id, portName } = params
     const { toggle } = request.only(['toggle'])
 
-    const sw = await Switch.query().where('id', id).first()
+    const sw = await Switch.query().where('id', id).firstOrFail()
 
-    if (!sw) {
-      return { error: 'Switch not found' }
-    }
+    const ssh = await SSH.connect({ host: sw.ip })
+    await setAdminPortStatusCmd(ssh, portName, toggle)
 
-    const cmd = new CommandSshService({
-      host: sw.ip,
-    })
-    const setPortStatus = new SetAdminPortStatus(cmd)
-    await setPortStatus.send(portName, toggle)
-
-    const showPortStatus = await new PortStatusCmdService(cmd)
-    const portStatus = await showPortStatus.send(portName)
+    const portStatus = await showPortStatusCmd(ssh, portName)
+    ssh.disconnect()
 
     return response.status(200).send(portStatus[0])
   }
 
   async syncPorts({ params }: HttpContext) {
     const swId = params.id
-    const sw = await Switch.query().preload('ports').where('id', swId).first()
+    const sw = await Switch.query().preload('ports').where('id', swId).firstOrFail()
 
-    if (!sw) {
-      return { error: 'Switch not found' }
-    }
-
-    const cmd = new CommandSshService({
-      host: sw.ip,
-    })
-    const vlanPort = new PortStatusCmdService(cmd)
-    const dataSw = await vlanPort.send()
+    const ssh = await SSH.connect({ host: sw.ip })
+    const vlanPorts = await showPortStatusCmd(ssh)
+    ssh.disconnect()
 
     // merge port status vindo do sw com portas do banco
-    const merge = dataSw
+    const merge = vlanPorts
       .map((portSw: any): any | null => {
         const portDb = sw.ports.find((p: any) => p.portName === portSw.portName)
         if (portDb) {
@@ -161,11 +139,11 @@ export default class SwitchesController {
     const mergePromise = merge.map((port: any): any => {
       return Port.query().where('id', port.id).update(port)
     })
-    const show = await Promise.all(mergePromise)
+    await Promise.all(mergePromise)
 
     // apaga as portas do banco que não existem no sw (array filter)
     const portsToDelete = sw.ports.filter(
-      (port: any) => !dataSw.find((p: any) => p.portName === port.portName)
+      (port: any) => !vlanPorts.find((p: any) => p.portName === port.portName)
     )
     const portsToDeletePromise = portsToDelete.map((port: any) => {
       return Port.query().where('id', port.id).delete()
@@ -187,12 +165,10 @@ export default class SwitchesController {
 
   async getConfigAndSync({ params, response }: HttpContext) {
     const sw = await Switch.query().where('id', params.id).first()
-    const cmd = new CommandSshService({
-      host: sw?.ip,
-    })
 
-    const configCommand = new ShowConfigService(cmd)
-    const config = await configCommand.send()
+    const ssh = await SSH.connect({ host: sw?.ip })
+    const config = await showConfigCmd(ssh)
+    ssh.disconnect()
 
     const configDB = await Config.firstOrCreate({ switchId: params.id }, { content: config })
 
@@ -200,7 +176,7 @@ export default class SwitchesController {
   }
 
   async configPage({ params }: HttpContext) {
-    const cmd = new CommandSshService({
+    const ssh = await SSH.connect({
       host: '10.10.0.3',
     })
     // const vlanPort = new VlanPortCmdService(cmd)
@@ -212,13 +188,13 @@ export default class SwitchesController {
     // const hostVlan = new ShowHostVlanService(cmd)
     // const response = await hostVlan.send()
 
-    // const ipAddress = new ShowIpAddressService(cmd)
-    // const response = await ipAddress.send()
+    const ipAddress = await showIpAddressCmd(ssh)
 
     // const systemInfo = new ShowSystemService(cmd)
     // const response = await systemInfo.send()
 
     // console.log(response)
+    return ipAddress
 
     return this.hx.render(['pages/switches/index', 'pages/switches/config'], { id: params.id })
   }
@@ -230,16 +206,15 @@ export default class SwitchesController {
   async test({ response }: HttpContext) {
     console.log('running test endpoint')
 
-    const ssh = await CommandSshService.openConnection({
+    const ssh = await SSH.connect({
       host: '10.10.0.107',
     })
     //-----------------
-    const instance = PortStatusCmdService.getInstance(ssh)
-    const a = await instance.send('ge.1.2')
-    const b = await instance.send('ge.1.3')
+    const ipAddress = await showIpAddressCmd(ssh)
 
     //-----------------
     console.log('fechando a conexao')
     ssh.disconnect()
+    return response.status(200).send({ ipAddress })
   }
 }

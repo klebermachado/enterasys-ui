@@ -3,7 +3,7 @@ import { Client } from 'ssh2'
 import { Subject } from 'rxjs'
 
 @inject()
-export default class CommandSshService {
+export default class SSH {
   private conn = new Client()
   credentials: {}
   private commands: string[] = []
@@ -25,15 +25,16 @@ export default class CommandSshService {
     }
   }
 
-  static async openConnection(credentials: any): Promise<CommandSshService> {
+  static async connect(credentials: any): Promise<SSH> {
     return new Promise(async (resolve) => {
-      const cmd = new CommandSshService(credentials)
-      await cmd.connect()
+      const cmd = new SSH(credentials)
+      await cmd.connectSSH()
 
       cmd.conn.shell((err: any, stream: any) => {
         cmd.stream = stream
 
         cmd.stream.on('data', (data: any) => {
+          // make split to return the response
           const regexEndCommand = /^.+\(.+\)\-\>/gm
           const matchEndCommand = data.toString().match(regexEndCommand)
 
@@ -56,7 +57,7 @@ export default class CommandSshService {
     })
   }
 
-  connect(): Promise<void> {
+  private connectSSH(): Promise<void> {
     return new Promise((resolve, reject) => {
       this.conn.on('ready', () => resolve()).connect(this.credentials)
       this.conn.on('error', (err: any) => reject(err))
