@@ -38,6 +38,17 @@ export default class SwitchesController {
     return response.status(200).send(data)
   }
 
+  async showPortAlias({ params, response }: HttpContext) {
+    const sw: any = await Switch.query().where('id', params.id).first()
+
+    const ssh = await SSH.connect({ host: sw.ip })
+    const data = await showPortAliasCmd(ssh)
+    console.log(data)
+    ssh.disconnect()
+
+    return response.status(200).send(data)
+  }
+
   async create() {
     return this.hx.render('pages/switches/create')
   }
@@ -74,11 +85,7 @@ export default class SwitchesController {
 
   async updatePort({ params, request, response }: HttpContext) {
     const data = request.only(['alias', 'description', 'portName'])
-    const sw = await Switch.query().where('id', params.id).first()
-
-    if (!sw) {
-      return { error: 'Switch not found' }
-    }
+    const sw = await Switch.query().where('id', params.id).firstOrFail()
 
     const ssh = await SSH.connect({ host: sw.ip })
     await setPortAliasServiceCmd(ssh, data.portName, data.alias)
@@ -120,7 +127,7 @@ export default class SwitchesController {
     const sw = await Switch.query().preload('ports').where('id', swId).firstOrFail()
 
     const ssh = await SSH.connect({ host: sw.ip })
-    const vlanPorts = await showPortStatusCmd(ssh)
+    const vlanPorts = await showPortAliasCmd(ssh)
     ssh.disconnect()
 
     // merge port status vindo do sw com portas do banco
@@ -130,7 +137,7 @@ export default class SwitchesController {
         if (portDb) {
           return {
             ...portDb.toJSON(),
-            alias: portSw.portAlias,
+            alias: portSw.alias,
           }
         }
         return null
