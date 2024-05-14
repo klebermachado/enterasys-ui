@@ -1,5 +1,8 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column } from '@adonisjs/lucid/orm'
+import { BaseModel, belongsTo, column, hasMany } from '@adonisjs/lucid/orm'
+import Vlan from './vlan.js'
+import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
+import Egress from './egress.js'
 
 export default class Port extends BaseModel {
   @column({ isPrimary: true })
@@ -25,4 +28,10 @@ export default class Port extends BaseModel {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime
+
+  @belongsTo(() => Vlan)
+  declare vlan: BelongsTo<typeof Vlan>
+
+  @hasMany(() => Egress)
+  declare egress: HasMany<typeof Egress>
 }
