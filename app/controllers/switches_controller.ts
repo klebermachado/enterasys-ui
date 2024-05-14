@@ -13,6 +13,7 @@ import showPortStatusCmd from '../ssh/show/show_port_status_cmd_cmd.js'
 import showConfigCmd from '../ssh/show/show_config_cmd.js'
 import showIpAddressCmd from '../ssh/show/show_ip_address_cmd.js'
 import showPortAliasCmd from '../ssh/show/show_port_alias_cmd.js'
+import showVlanPortCmd from '../ssh/show/show_vlan_port_cmd_cmd.js'
 
 @inject()
 export default class SwitchesController {
@@ -100,11 +101,58 @@ export default class SwitchesController {
     return response.status(200).send(ports)
   }
 
-  async vlansPage({ params }: HttpContext) {
-    return this.hx.render(['pages/switches/index', 'pages/switches/vlans'], {
-      id: params.id,
-      generateRandomID,
-    })
+  async vlansPage({ params, response }: HttpContext) {
+    const sw = await Switch.query()
+      .preload('ports', (portsQuery) => {
+        portsQuery.preload('vlan').preload('egress', (egressQuery) => {
+          egressQuery.preload('vlan')
+        })
+      })
+      .where('id', params.id)
+      .firstOrFail()
+
+    const ssh = await SSH.connect({ host: sw.ip })
+    // { portName: 'ge.1.46', portVlan: '1', untagged: '1', tagged: [ '1130', '3610' ] }
+    const vlanPort = await showVlanPortCmd(ssh)
+    ssh.disconnect()
+
+    for (const portSw of vlanPort) {
+      // procurar  no objeto local a vlanport e vlans egress
+      const portDB = sw.ports.find((p: any) => p.portName === portSw.portName)
+
+      // sync portVlan
+      if (portDB?.vlan?.tag !== portSw.portVlan) {
+        console.log('vlanPort é diferente, deve atualizar o banco de dados')
+        // sql para setar port vlan
+      }
+
+      // Adicionar egress faltantes no banco de dados
+      for (const egress of portSw.tagged) {
+        if (!portDB?.egress.find((e: any) => e.vlan.tag === egress)) {
+          console.log('egress não encontrado, deve adicionar o banco de dados')
+          // sql para setar egress
+        }
+      }
+
+      // Remover egress que não existem mais no switch
+      if (portDB?.egress) {
+        for (const egressDB of portDB.egress) {
+          if (!portSw.tagged.find((e: any) => e === egressDB?.vlan.tag)) {
+            console.log('egress não encontrado, deve remover esse egress do banco de dados')
+            // sql para remover egress
+          }
+        }
+      }
+    }
+
+    const swUpdated = await Switch.query()
+      .preload('ports', (portsQuery) => {
+        portsQuery.preload('vlan').preload('egress')
+      })
+      .where('id', params.id)
+      .firstOrFail()
+
+    return response.status(200).send(swUpdated)
   }
 
   async togglePort({ params, response, request }: HttpContext) {

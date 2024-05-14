@@ -1,4 +1,4 @@
-import SSH from '../../services/ssh'
+import SSH from '../../services/ssh.js'
 
 export default async function showPortAliasCmd(connection: SSH, portName?: string): Promise<any[]> {
   const response = await connection.exec(`show port alias ${portName ?? ''}`)

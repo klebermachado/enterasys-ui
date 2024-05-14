@@ -24,7 +24,7 @@ function parse(raw: string): any {
         portName: portName[0],
         portVlan: portVlan[0] ?? '',
         untagged: untagged[0] ?? '',
-        tagged: tagged[0] ?? '',
+        tagged: tagged[0] ?? [],
       }
     })
     .filter((port) => port.portName !== undefined)
